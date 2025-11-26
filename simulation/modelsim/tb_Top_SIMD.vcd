@@ -1,0 +1,1315 @@
+$date
+	Wed Nov 19 00:09:45 2025
+$end
+$version
+	ModelSim Version 2020.1
+$end
+$timescale
+	1ps
+$end
+
+$scope module tb_Top_SIMD $end
+$var parameter 32 ! SRC_H $end
+$var parameter 32 " SRC_W $end
+$var parameter 32 # DST_H $end
+$var parameter 32 $ DST_W $end
+$var parameter 32 % N $end
+$var reg 1 & clk $end
+$var reg 1 ' rst $end
+$var reg 1 ( start $end
+$var reg 1 ) done $end
+$var integer 32 * pass_count $end
+$var integer 32 + fail_count $end
+
+$scope function bilinear_ref_pixel $end
+$upscope $end
+
+$scope task cargar_batch $end
+$upscope $end
+
+$scope module dut $end
+$var parameter 32 , N $end
+$var wire 1 - clk $end
+$var wire 1 . rst $end
+$var wire 1 / start $end
+$var reg 1 0 done $end
+$var reg 1 1 load_regs $end
+$var reg 1 2 run_simd $end
+$var reg 1 3 write_back $end
+$var reg 1 4 simd_valid $end
+
+$scope module fsm_inst $end
+$var parameter 32 5 N $end
+$var parameter 32 6 OUT_W $end
+$var parameter 32 7 OUT_H $end
+$var parameter 32 8 TOTAL_PIXELS $end
+$var parameter 32 9 NUM_BATCHES $end
+$var wire 1 - clk $end
+$var wire 1 . rst $end
+$var wire 1 / start $end
+$var wire 1 : simd_valid $end
+$var reg 1 ; load_regs $end
+$var reg 1 < run_simd $end
+$var reg 1 = write_back $end
+$var reg 1 > done $end
+$var reg 2 ? batch_cnt [1:0] $end
+$var reg 3 @ state [2:0] $end
+$var reg 3 A next [2:0] $end
+$upscope $end
+
+$scope module regs_inst $end
+$var parameter 32 B N $end
+$var wire 1 - clk $end
+$var wire 1 C rst $end
+$var wire 1 D load $end
+$upscope $end
+
+$scope module simd_inst $end
+$var parameter 32 E N $end
+$var wire 1 - clk $end
+$var wire 1 . rst $end
+$var wire 1 F valid_in $end
+$var reg 1 G valid_out $end
+
+$scope begin SIMD_CORES[3] $end
+$var parameter 32 H i $end
+
+$scope module core $end
+$var wire 1 - clk $end
+$var wire 1 . rst $end
+$var wire 1 F valid_in $end
+$var wire 1 I I00 [7] $end
+$var wire 1 J I00 [6] $end
+$var wire 1 K I00 [5] $end
+$var wire 1 L I00 [4] $end
+$var wire 1 M I00 [3] $end
+$var wire 1 N I00 [2] $end
+$var wire 1 O I00 [1] $end
+$var wire 1 P I00 [0] $end
+$var wire 1 Q I10 [7] $end
+$var wire 1 R I10 [6] $end
+$var wire 1 S I10 [5] $end
+$var wire 1 T I10 [4] $end
+$var wire 1 U I10 [3] $end
+$var wire 1 V I10 [2] $end
+$var wire 1 W I10 [1] $end
+$var wire 1 X I10 [0] $end
+$var wire 1 Y I01 [7] $end
+$var wire 1 Z I01 [6] $end
+$var wire 1 [ I01 [5] $end
+$var wire 1 \ I01 [4] $end
+$var wire 1 ] I01 [3] $end
+$var wire 1 ^ I01 [2] $end
+$var wire 1 _ I01 [1] $end
+$var wire 1 ` I01 [0] $end
+$var wire 1 a I11 [7] $end
+$var wire 1 b I11 [6] $end
+$var wire 1 c I11 [5] $end
+$var wire 1 d I11 [4] $end
+$var wire 1 e I11 [3] $end
+$var wire 1 f I11 [2] $end
+$var wire 1 g I11 [1] $end
+$var wire 1 h I11 [0] $end
+$var wire 1 i alpha [7] $end
+$var wire 1 j alpha [6] $end
+$var wire 1 k alpha [5] $end
+$var wire 1 l alpha [4] $end
+$var wire 1 m alpha [3] $end
+$var wire 1 n alpha [2] $end
+$var wire 1 o alpha [1] $end
+$var wire 1 p alpha [0] $end
+$var wire 1 q beta [7] $end
+$var wire 1 r beta [6] $end
+$var wire 1 s beta [5] $end
+$var wire 1 t beta [4] $end
+$var wire 1 u beta [3] $end
+$var wire 1 v beta [2] $end
+$var wire 1 w beta [1] $end
+$var wire 1 x beta [0] $end
+$var reg 1 y valid_out $end
+$var reg 8 z pixel_out [7:0] $end
+$var reg 16 { I00_q [15:0] $end
+$var reg 16 | I10_q [15:0] $end
+$var reg 16 } I01_q [15:0] $end
+$var reg 16 ~ I11_q [15:0] $end
+$var reg 16 !! alpha_q [15:0] $end
+$var reg 16 "! beta_q [15:0] $end
+$var reg 17 #! diff_x0 [16:0] $end
+$var reg 17 $! diff_x1 [16:0] $end
+$var reg 32 %! mult_ax [31:0] $end
+$var reg 32 &! mult_bx [31:0] $end
+$var reg 16 '! term_ax [15:0] $end
+$var reg 16 (! term_bx [15:0] $end
+$var reg 16 )! a_q [15:0] $end
+$var reg 16 *! b_q [15:0] $end
+$var reg 17 +! diff_y [16:0] $end
+$var reg 32 ,! mult_by [31:0] $end
+$var reg 16 -! term_by [15:0] $end
+$var reg 16 .! v_q [15:0] $end
+$var reg 17 /! v_rounded [16:0] $end
+$var reg 9 0! pixel_int [8:0] $end
+$var reg 8 1! pixel_clamped [7:0] $end
+$upscope $end
+$upscope $end
+
+$scope begin SIMD_CORES[2] $end
+$var parameter 32 2! i $end
+
+$scope module core $end
+$var wire 1 - clk $end
+$var wire 1 . rst $end
+$var wire 1 F valid_in $end
+$var wire 1 3! I00 [7] $end
+$var wire 1 4! I00 [6] $end
+$var wire 1 5! I00 [5] $end
+$var wire 1 6! I00 [4] $end
+$var wire 1 7! I00 [3] $end
+$var wire 1 8! I00 [2] $end
+$var wire 1 9! I00 [1] $end
+$var wire 1 :! I00 [0] $end
+$var wire 1 ;! I10 [7] $end
+$var wire 1 <! I10 [6] $end
+$var wire 1 =! I10 [5] $end
+$var wire 1 >! I10 [4] $end
+$var wire 1 ?! I10 [3] $end
+$var wire 1 @! I10 [2] $end
+$var wire 1 A! I10 [1] $end
+$var wire 1 B! I10 [0] $end
+$var wire 1 C! I01 [7] $end
+$var wire 1 D! I01 [6] $end
+$var wire 1 E! I01 [5] $end
+$var wire 1 F! I01 [4] $end
+$var wire 1 G! I01 [3] $end
+$var wire 1 H! I01 [2] $end
+$var wire 1 I! I01 [1] $end
+$var wire 1 J! I01 [0] $end
+$var wire 1 K! I11 [7] $end
+$var wire 1 L! I11 [6] $end
+$var wire 1 M! I11 [5] $end
+$var wire 1 N! I11 [4] $end
+$var wire 1 O! I11 [3] $end
+$var wire 1 P! I11 [2] $end
+$var wire 1 Q! I11 [1] $end
+$var wire 1 R! I11 [0] $end
+$var wire 1 S! alpha [7] $end
+$var wire 1 T! alpha [6] $end
+$var wire 1 U! alpha [5] $end
+$var wire 1 V! alpha [4] $end
+$var wire 1 W! alpha [3] $end
+$var wire 1 X! alpha [2] $end
+$var wire 1 Y! alpha [1] $end
+$var wire 1 Z! alpha [0] $end
+$var wire 1 [! beta [7] $end
+$var wire 1 \! beta [6] $end
+$var wire 1 ]! beta [5] $end
+$var wire 1 ^! beta [4] $end
+$var wire 1 _! beta [3] $end
+$var wire 1 `! beta [2] $end
+$var wire 1 a! beta [1] $end
+$var wire 1 b! beta [0] $end
+$var reg 1 c! valid_out $end
+$var reg 8 d! pixel_out [7:0] $end
+$var reg 16 e! I00_q [15:0] $end
+$var reg 16 f! I10_q [15:0] $end
+$var reg 16 g! I01_q [15:0] $end
+$var reg 16 h! I11_q [15:0] $end
+$var reg 16 i! alpha_q [15:0] $end
+$var reg 16 j! beta_q [15:0] $end
+$var reg 17 k! diff_x0 [16:0] $end
+$var reg 17 l! diff_x1 [16:0] $end
+$var reg 32 m! mult_ax [31:0] $end
+$var reg 32 n! mult_bx [31:0] $end
+$var reg 16 o! term_ax [15:0] $end
+$var reg 16 p! term_bx [15:0] $end
+$var reg 16 q! a_q [15:0] $end
+$var reg 16 r! b_q [15:0] $end
+$var reg 17 s! diff_y [16:0] $end
+$var reg 32 t! mult_by [31:0] $end
+$var reg 16 u! term_by [15:0] $end
+$var reg 16 v! v_q [15:0] $end
+$var reg 17 w! v_rounded [16:0] $end
+$var reg 9 x! pixel_int [8:0] $end
+$var reg 8 y! pixel_clamped [7:0] $end
+$upscope $end
+$upscope $end
+
+$scope begin SIMD_CORES[1] $end
+$var parameter 32 z! i $end
+
+$scope module core $end
+$var wire 1 - clk $end
+$var wire 1 . rst $end
+$var wire 1 F valid_in $end
+$var wire 1 {! I00 [7] $end
+$var wire 1 |! I00 [6] $end
+$var wire 1 }! I00 [5] $end
+$var wire 1 ~! I00 [4] $end
+$var wire 1 !" I00 [3] $end
+$var wire 1 "" I00 [2] $end
+$var wire 1 #" I00 [1] $end
+$var wire 1 $" I00 [0] $end
+$var wire 1 %" I10 [7] $end
+$var wire 1 &" I10 [6] $end
+$var wire 1 '" I10 [5] $end
+$var wire 1 (" I10 [4] $end
+$var wire 1 )" I10 [3] $end
+$var wire 1 *" I10 [2] $end
+$var wire 1 +" I10 [1] $end
+$var wire 1 ," I10 [0] $end
+$var wire 1 -" I01 [7] $end
+$var wire 1 ." I01 [6] $end
+$var wire 1 /" I01 [5] $end
+$var wire 1 0" I01 [4] $end
+$var wire 1 1" I01 [3] $end
+$var wire 1 2" I01 [2] $end
+$var wire 1 3" I01 [1] $end
+$var wire 1 4" I01 [0] $end
+$var wire 1 5" I11 [7] $end
+$var wire 1 6" I11 [6] $end
+$var wire 1 7" I11 [5] $end
+$var wire 1 8" I11 [4] $end
+$var wire 1 9" I11 [3] $end
+$var wire 1 :" I11 [2] $end
+$var wire 1 ;" I11 [1] $end
+$var wire 1 <" I11 [0] $end
+$var wire 1 =" alpha [7] $end
+$var wire 1 >" alpha [6] $end
+$var wire 1 ?" alpha [5] $end
+$var wire 1 @" alpha [4] $end
+$var wire 1 A" alpha [3] $end
+$var wire 1 B" alpha [2] $end
+$var wire 1 C" alpha [1] $end
+$var wire 1 D" alpha [0] $end
+$var wire 1 E" beta [7] $end
+$var wire 1 F" beta [6] $end
+$var wire 1 G" beta [5] $end
+$var wire 1 H" beta [4] $end
+$var wire 1 I" beta [3] $end
+$var wire 1 J" beta [2] $end
+$var wire 1 K" beta [1] $end
+$var wire 1 L" beta [0] $end
+$var reg 1 M" valid_out $end
+$var reg 8 N" pixel_out [7:0] $end
+$var reg 16 O" I00_q [15:0] $end
+$var reg 16 P" I10_q [15:0] $end
+$var reg 16 Q" I01_q [15:0] $end
+$var reg 16 R" I11_q [15:0] $end
+$var reg 16 S" alpha_q [15:0] $end
+$var reg 16 T" beta_q [15:0] $end
+$var reg 17 U" diff_x0 [16:0] $end
+$var reg 17 V" diff_x1 [16:0] $end
+$var reg 32 W" mult_ax [31:0] $end
+$var reg 32 X" mult_bx [31:0] $end
+$var reg 16 Y" term_ax [15:0] $end
+$var reg 16 Z" term_bx [15:0] $end
+$var reg 16 [" a_q [15:0] $end
+$var reg 16 \" b_q [15:0] $end
+$var reg 17 ]" diff_y [16:0] $end
+$var reg 32 ^" mult_by [31:0] $end
+$var reg 16 _" term_by [15:0] $end
+$var reg 16 `" v_q [15:0] $end
+$var reg 17 a" v_rounded [16:0] $end
+$var reg 9 b" pixel_int [8:0] $end
+$var reg 8 c" pixel_clamped [7:0] $end
+$upscope $end
+$upscope $end
+
+$scope begin SIMD_CORES[0] $end
+$var parameter 32 d" i $end
+
+$scope module core $end
+$var wire 1 - clk $end
+$var wire 1 . rst $end
+$var wire 1 F valid_in $end
+$var wire 1 e" I00 [7] $end
+$var wire 1 f" I00 [6] $end
+$var wire 1 g" I00 [5] $end
+$var wire 1 h" I00 [4] $end
+$var wire 1 i" I00 [3] $end
+$var wire 1 j" I00 [2] $end
+$var wire 1 k" I00 [1] $end
+$var wire 1 l" I00 [0] $end
+$var wire 1 m" I10 [7] $end
+$var wire 1 n" I10 [6] $end
+$var wire 1 o" I10 [5] $end
+$var wire 1 p" I10 [4] $end
+$var wire 1 q" I10 [3] $end
+$var wire 1 r" I10 [2] $end
+$var wire 1 s" I10 [1] $end
+$var wire 1 t" I10 [0] $end
+$var wire 1 u" I01 [7] $end
+$var wire 1 v" I01 [6] $end
+$var wire 1 w" I01 [5] $end
+$var wire 1 x" I01 [4] $end
+$var wire 1 y" I01 [3] $end
+$var wire 1 z" I01 [2] $end
+$var wire 1 {" I01 [1] $end
+$var wire 1 |" I01 [0] $end
+$var wire 1 }" I11 [7] $end
+$var wire 1 ~" I11 [6] $end
+$var wire 1 !# I11 [5] $end
+$var wire 1 "# I11 [4] $end
+$var wire 1 ## I11 [3] $end
+$var wire 1 $# I11 [2] $end
+$var wire 1 %# I11 [1] $end
+$var wire 1 &# I11 [0] $end
+$var wire 1 '# alpha [7] $end
+$var wire 1 (# alpha [6] $end
+$var wire 1 )# alpha [5] $end
+$var wire 1 *# alpha [4] $end
+$var wire 1 +# alpha [3] $end
+$var wire 1 ,# alpha [2] $end
+$var wire 1 -# alpha [1] $end
+$var wire 1 .# alpha [0] $end
+$var wire 1 /# beta [7] $end
+$var wire 1 0# beta [6] $end
+$var wire 1 1# beta [5] $end
+$var wire 1 2# beta [4] $end
+$var wire 1 3# beta [3] $end
+$var wire 1 4# beta [2] $end
+$var wire 1 5# beta [1] $end
+$var wire 1 6# beta [0] $end
+$var reg 1 7# valid_out $end
+$var reg 8 8# pixel_out [7:0] $end
+$var reg 16 9# I00_q [15:0] $end
+$var reg 16 :# I10_q [15:0] $end
+$var reg 16 ;# I01_q [15:0] $end
+$var reg 16 <# I11_q [15:0] $end
+$var reg 16 =# alpha_q [15:0] $end
+$var reg 16 ># beta_q [15:0] $end
+$var reg 17 ?# diff_x0 [16:0] $end
+$var reg 17 @# diff_x1 [16:0] $end
+$var reg 32 A# mult_ax [31:0] $end
+$var reg 32 B# mult_bx [31:0] $end
+$var reg 16 C# term_ax [15:0] $end
+$var reg 16 D# term_bx [15:0] $end
+$var reg 16 E# a_q [15:0] $end
+$var reg 16 F# b_q [15:0] $end
+$var reg 17 G# diff_y [16:0] $end
+$var reg 32 H# mult_by [31:0] $end
+$var reg 16 I# term_by [15:0] $end
+$var reg 16 J# v_q [15:0] $end
+$var reg 17 K# v_rounded [16:0] $end
+$var reg 9 L# pixel_int [8:0] $end
+$var reg 8 M# pixel_clamped [7:0] $end
+$upscope $end
+$upscope $end
+$upscope $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+0&
+1'
+0(
+0)
+00
+01
+02
+03
+04
+0;
+0<
+0=
+0>
+b0 ?
+b0 @
+b0 A
+0G
+07#
+b0 8#
+bx00000000 9#
+bx00000000 :#
+bx00000000 ;#
+bx00000000 <#
+b0xxxxxxxx =#
+b0xxxxxxxx >#
+bx ?#
+bx @#
+bx A#
+bx B#
+bx C#
+bx D#
+bx E#
+bx F#
+bx G#
+bx H#
+bx I#
+bx J#
+bx K#
+bx L#
+bx M#
+0M"
+b0 N"
+bx00000000 O"
+bx00000000 P"
+bx00000000 Q"
+bx00000000 R"
+b0xxxxxxxx S"
+b0xxxxxxxx T"
+bx U"
+bx V"
+bx W"
+bx X"
+bx Y"
+bx Z"
+bx ["
+bx \"
+bx ]"
+bx ^"
+bx _"
+bx `"
+bx a"
+bx b"
+bx c"
+0c!
+b0 d!
+bx00000000 e!
+bx00000000 f!
+bx00000000 g!
+bx00000000 h!
+b0xxxxxxxx i!
+b0xxxxxxxx j!
+bx k!
+bx l!
+bx m!
+bx n!
+bx o!
+bx p!
+bx q!
+bx r!
+bx s!
+bx t!
+bx u!
+bx v!
+bx w!
+bx x!
+bx y!
+0y
+b0 z
+bx00000000 {
+bx00000000 |
+bx00000000 }
+bx00000000 ~
+b0xxxxxxxx !!
+b0xxxxxxxx "!
+bx #!
+bx $!
+bx %!
+bx &!
+bx '!
+bx (!
+bx )!
+bx *!
+bx +!
+bx ,!
+bx -!
+bx .!
+bx /!
+bx 0!
+bx 1!
+b100 !
+b100 "
+b11 #
+b11 $
+b100 %
+b100 ,
+b100 5
+b11 6
+b11 7
+b1001 8
+b11 9
+b100 B
+b100 E
+b0 d"
+b1 z!
+b10 2!
+b11 H
+b0 *
+b0 +
+0-
+1.
+0/
+0:
+0D
+zC
+0F
+xl"
+xk"
+xj"
+xi"
+xh"
+xg"
+xf"
+xe"
+xt"
+xs"
+xr"
+xq"
+xp"
+xo"
+xn"
+xm"
+x|"
+x{"
+xz"
+xy"
+xx"
+xw"
+xv"
+xu"
+x&#
+x%#
+x$#
+x##
+x"#
+x!#
+x~"
+x}"
+x.#
+x-#
+x,#
+x+#
+x*#
+x)#
+x(#
+x'#
+x6#
+x5#
+x4#
+x3#
+x2#
+x1#
+x0#
+x/#
+x$"
+x#"
+x""
+x!"
+x~!
+x}!
+x|!
+x{!
+x,"
+x+"
+x*"
+x)"
+x("
+x'"
+x&"
+x%"
+x4"
+x3"
+x2"
+x1"
+x0"
+x/"
+x."
+x-"
+x<"
+x;"
+x:"
+x9"
+x8"
+x7"
+x6"
+x5"
+xD"
+xC"
+xB"
+xA"
+x@"
+x?"
+x>"
+x="
+xL"
+xK"
+xJ"
+xI"
+xH"
+xG"
+xF"
+xE"
+x:!
+x9!
+x8!
+x7!
+x6!
+x5!
+x4!
+x3!
+xB!
+xA!
+x@!
+x?!
+x>!
+x=!
+x<!
+x;!
+xJ!
+xI!
+xH!
+xG!
+xF!
+xE!
+xD!
+xC!
+xR!
+xQ!
+xP!
+xO!
+xN!
+xM!
+xL!
+xK!
+xZ!
+xY!
+xX!
+xW!
+xV!
+xU!
+xT!
+xS!
+xb!
+xa!
+x`!
+x_!
+x^!
+x]!
+x\!
+x[!
+xP
+xO
+xN
+xM
+xL
+xK
+xJ
+xI
+xX
+xW
+xV
+xU
+xT
+xS
+xR
+xQ
+x`
+x_
+x^
+x]
+x\
+x[
+xZ
+xY
+xh
+xg
+xf
+xe
+xd
+xc
+xb
+xa
+xp
+xo
+xn
+xm
+xl
+xk
+xj
+xi
+xx
+xw
+xv
+xu
+xt
+xs
+xr
+xq
+$end
+#5000
+1&
+1-
+#10000
+0&
+0-
+#15000
+1&
+1-
+#20000
+0&
+0-
+#25000
+1&
+1-
+#30000
+0&
+0-
+#35000
+1&
+1-
+0'
+0.
+#40000
+0&
+0-
+#45000
+1&
+1-
+1(
+1/
+b1 A
+#50000
+0&
+0-
+#55000
+1&
+1-
+0(
+0/
+b0 A
+b1 @
+b1 A
+1;
+b10 A
+11
+1D
+#60000
+0&
+0-
+#65000
+1&
+1-
+b10 @
+1x
+0w
+0v
+0u
+0t
+0s
+0r
+1q
+1b!
+0a!
+0`!
+0_!
+0^!
+0]!
+0\!
+0[!
+1L"
+0K"
+0J"
+0I"
+0H"
+0G"
+0F"
+0E"
+16#
+05#
+04#
+03#
+02#
+01#
+00#
+0/#
+1p
+0o
+0n
+0m
+0l
+0k
+0j
+0i
+1Z!
+0Y!
+0X!
+0W!
+0V!
+0U!
+0T!
+0S!
+1D"
+0C"
+0B"
+0A"
+0@"
+0?"
+0>"
+1="
+1.#
+0-#
+0,#
+0+#
+0*#
+0)#
+0(#
+0'#
+0h
+1g
+0f
+1e
+0d
+1c
+0b
+1a
+0R!
+1Q!
+1P!
+0O!
+0N!
+0M!
+1L!
+0K!
+0<"
+1;"
+0:"
+09"
+18"
+17"
+06"
+05"
+0&#
+1%#
+0$#
+1##
+0"#
+0!#
+0~"
+0}"
+0`
+1_
+0^
+1]
+0\
+1[
+0Z
+1Y
+0J!
+1I!
+1H!
+0G!
+0F!
+0E!
+1D!
+0C!
+04"
+13"
+12"
+11"
+10"
+0/"
+0."
+0-"
+0|"
+1{"
+0z"
+1y"
+0x"
+0w"
+0v"
+0u"
+0X
+1W
+0V
+1U
+1T
+0S
+1R
+0Q
+0B!
+1A!
+1@!
+0?!
+0>!
+0=!
+1<!
+0;!
+0,"
+1+"
+0*"
+0)"
+1("
+1'"
+0&"
+0%"
+0t"
+1s"
+0r"
+1q"
+0p"
+0o"
+0n"
+0m"
+0P
+1O
+0N
+1M
+1L
+0K
+1J
+0I
+0:!
+19!
+18!
+07!
+06!
+05!
+14!
+03!
+0$"
+1#"
+1""
+1!"
+1~!
+0}!
+0|!
+0{!
+0l"
+1k"
+0j"
+1i"
+0h"
+0g"
+0f"
+0e"
+b101000000000 9#
+b101000000000 :#
+b101000000000 ;#
+b101000000000 <#
+b1 =#
+b1 >#
+b1111000000000 O"
+b11001000000000 P"
+b1111000000000 Q"
+b11001000000000 R"
+b10000001 S"
+b1 T"
+b100011000000000 e!
+b100011000000000 f!
+b100011000000000 g!
+b100011000000000 h!
+b1 i!
+b1 j!
+b101101000000000 {
+b101101000000000 |
+b1010101000000000 }
+b1010101000000000 ~
+b1 !!
+b10000001 "!
+0;
+1<
+b11 A
+12
+01
+1F
+0D
+b0 #!
+b0 $!
+b0 %!
+b0 '!
+b101101000000000 )!
+b0 &!
+b0 (!
+b1010101000000000 *!
+b0 k!
+b0 l!
+b0 m!
+b0 o!
+b100011000000000 q!
+b0 n!
+b0 p!
+b100011000000000 r!
+b1010000000000 U"
+b1010000000000 V"
+b10100001010000000000 W"
+b101000010100 Y"
+b10100000010100 ["
+b10100001010000000000 X"
+b101000010100 Z"
+b10100000010100 \"
+b0 ?#
+b0 @#
+b0 A#
+b0 C#
+b101000000000 E#
+b0 B#
+b0 D#
+b101000000000 F#
+b0 G#
+b0 H#
+b0 I#
+b101000000000 J#
+b0 ]"
+b0 ^"
+b0 _"
+b10100000010100 `"
+b0 s!
+b0 t!
+b0 u!
+b100011000000000 v!
+b101000000000000 +!
+b1010000101000000000000 ,!
+b10100001010000 -!
+b1000001001010000 .!
+b1000001011010000 /!
+b10000010 0!
+b10000010 1!
+b100011010000000 w!
+b1000110 x!
+b1000110 y!
+b10100010010100 a"
+b101000 b"
+b101000 c"
+b101010000000 K#
+b1010 L#
+b1010 M#
+#70000
+0&
+0-
+#75000
+1&
+1-
+b11 @
+17#
+b1010 8#
+1M"
+b101000 N"
+1c!
+b1000110 d!
+1y
+b10000010 z
+1G
+14
+1:
+0<
+b100 A
+02
+0F
+#80000
+0&
+0-
+#85000
+1&
+1-
+b100 @
+07#
+0M"
+0c!
+0y
+0G
+04
+0:
+1=
+b101 A
+13
+#90000
+0&
+0-
+#95000
+1&
+1-
+b101 @
+0=
+b1 A
+03
+#100000
+0&
+0-
+#105000
+1&
+1-
+b1 @
+b1 ?
+1;
+b10 A
+11
+1D
+#110000
+0&
+0-
+#115000
+1&
+1-
+b10 @
+0;
+1<
+b11 A
+12
+01
+1F
+0D
+#120000
+0&
+0-
+#125000
+1&
+1-
+b11 @
+17#
+1M"
+1c!
+1y
+1G
+14
+1:
+0<
+b100 A
+02
+0F
+#130000
+0&
+0-
+#135000
+1&
+1-
+b100 @
+07#
+0M"
+0c!
+0y
+0G
+04
+0:
+1=
+b101 A
+13
+#140000
+0&
+0-
+#145000
+1&
+1-
+b101 @
+0=
+b1 A
+03
+#150000
+0&
+0-
+#155000
+1&
+1-
+b1 @
+b10 ?
+1;
+b10 A
+11
+1D
+#160000
+0&
+0-
+#165000
+1&
+1-
+b10 @
+0;
+1<
+b11 A
+12
+01
+1F
+0D
+#170000
+0&
+0-
+#175000
+1&
+1-
+b11 @
+17#
+1M"
+1c!
+1y
+1G
+14
+1:
+0<
+b100 A
+02
+0F
+#180000
+0&
+0-
+#185000
+1&
+1-
+b100 @
+07#
+0M"
+0c!
+0y
+0G
+04
+0:
+1=
+b101 A
+13
+#190000
+0&
+0-
+#195000
+1&
+1-
+b101 @
+0=
+b110 A
+03
+#200000
+0&
+0-
+#205000
+1&
+1-
+b110 @
+b11 ?
+1>
+10
+1)
+b1 *
+b10 *
+b11 *
+b100 *
+#210000
+0&
+0-
+#215000
+1&
+1-
+1(
+1/
+0>
+1>
+#220000
+0&
+0-
+#225000
+1&
+1-
+0(
+b1 +
+b10 +
+b11 +
+b100 +
+0/
+0>
+1>
+#230000
+0&
+0-
+#235000
+1&
+1-
+1(
+1/
+0>
+1>
+#240000
+0&
+0-
+#245000
+1&
+1-
+0(
+b101 +

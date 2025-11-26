@@ -1,0 +1,350 @@
+$date
+	Thu Nov 13 21:42:40 2025
+$end
+$version
+	ModelSim Version 2020.1
+$end
+$timescale
+	1ps
+$end
+
+$scope module tb_debug_test12 $end
+$var reg 1 ! clk $end
+$var reg 1 " rst $end
+$var reg 1 # valid_in $end
+$var reg 8 $ I00 [7:0] $end
+$var reg 8 % I10 [7:0] $end
+$var reg 8 & I01 [7:0] $end
+$var reg 8 ' I11 [7:0] $end
+$var reg 8 ( alpha [7:0] $end
+$var reg 8 ) beta [7:0] $end
+$var reg 1 * valid_out $end
+$var reg 8 + pixel_out [7:0] $end
+$var reg 16 , I00_q [15:0] $end
+$var reg 16 - I10_q [15:0] $end
+$var reg 16 . I01_q [15:0] $end
+$var reg 16 / I11_q [15:0] $end
+$var reg 16 0 alpha_q [15:0] $end
+$var reg 16 1 beta_q [15:0] $end
+$var reg 17 2 diff_x0 [16:0] $end
+$var reg 17 3 diff_x1 [16:0] $end
+$var reg 32 4 mult_ax [31:0] $end
+$var reg 32 5 mult_bx [31:0] $end
+$var reg 16 6 term_ax [15:0] $end
+$var reg 16 7 term_bx [15:0] $end
+$var reg 16 8 a_q [15:0] $end
+$var reg 16 9 b_q [15:0] $end
+
+$scope module dut $end
+$var wire 1 : clk $end
+$var wire 1 ; rst $end
+$var wire 1 < valid_in $end
+$var wire 1 = I00 [7] $end
+$var wire 1 > I00 [6] $end
+$var wire 1 ? I00 [5] $end
+$var wire 1 @ I00 [4] $end
+$var wire 1 A I00 [3] $end
+$var wire 1 B I00 [2] $end
+$var wire 1 C I00 [1] $end
+$var wire 1 D I00 [0] $end
+$var wire 1 E I10 [7] $end
+$var wire 1 F I10 [6] $end
+$var wire 1 G I10 [5] $end
+$var wire 1 H I10 [4] $end
+$var wire 1 I I10 [3] $end
+$var wire 1 J I10 [2] $end
+$var wire 1 K I10 [1] $end
+$var wire 1 L I10 [0] $end
+$var wire 1 M I01 [7] $end
+$var wire 1 N I01 [6] $end
+$var wire 1 O I01 [5] $end
+$var wire 1 P I01 [4] $end
+$var wire 1 Q I01 [3] $end
+$var wire 1 R I01 [2] $end
+$var wire 1 S I01 [1] $end
+$var wire 1 T I01 [0] $end
+$var wire 1 U I11 [7] $end
+$var wire 1 V I11 [6] $end
+$var wire 1 W I11 [5] $end
+$var wire 1 X I11 [4] $end
+$var wire 1 Y I11 [3] $end
+$var wire 1 Z I11 [2] $end
+$var wire 1 [ I11 [1] $end
+$var wire 1 \ I11 [0] $end
+$var wire 1 ] alpha [7] $end
+$var wire 1 ^ alpha [6] $end
+$var wire 1 _ alpha [5] $end
+$var wire 1 ` alpha [4] $end
+$var wire 1 a alpha [3] $end
+$var wire 1 b alpha [2] $end
+$var wire 1 c alpha [1] $end
+$var wire 1 d alpha [0] $end
+$var wire 1 e beta [7] $end
+$var wire 1 f beta [6] $end
+$var wire 1 g beta [5] $end
+$var wire 1 h beta [4] $end
+$var wire 1 i beta [3] $end
+$var wire 1 j beta [2] $end
+$var wire 1 k beta [1] $end
+$var wire 1 l beta [0] $end
+$var reg 1 m valid_out $end
+$var reg 8 n pixel_out [7:0] $end
+$var reg 16 o I00_q [15:0] $end
+$var reg 16 p I10_q [15:0] $end
+$var reg 16 q I01_q [15:0] $end
+$var reg 16 r I11_q [15:0] $end
+$var reg 16 s alpha_q [15:0] $end
+$var reg 16 t beta_q [15:0] $end
+$var reg 17 u diff_x0 [16:0] $end
+$var reg 17 v diff_x1 [16:0] $end
+$var reg 32 w mult_ax [31:0] $end
+$var reg 32 x mult_bx [31:0] $end
+$var reg 16 y term_ax [15:0] $end
+$var reg 16 z term_bx [15:0] $end
+$var reg 16 { a_q [15:0] $end
+$var reg 16 | b_q [15:0] $end
+$var reg 17 } diff_y [16:0] $end
+$var reg 32 ~ mult_by [31:0] $end
+$var reg 16 !! term_by [15:0] $end
+$var reg 16 "! v_q [15:0] $end
+$var reg 17 #! v_rounded [16:0] $end
+$var reg 9 $! pixel_int [8:0] $end
+$var reg 8 %! pixel_clamped [7:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+0!
+1"
+0#
+b0 $
+b0 %
+b0 &
+b0 '
+b0 (
+b0 )
+0*
+b0 +
+bx ,
+bx -
+bx .
+bx /
+bx 0
+bx 1
+bx 2
+bx 3
+bx 4
+bx 5
+bx 6
+bx 7
+bx 8
+bx 9
+0m
+b0 n
+b0 o
+b0 p
+b0 q
+b0 r
+b0 s
+b0 t
+b0 u
+b0 v
+b0 w
+b0 x
+b0 y
+b0 z
+b0 {
+b0 |
+b0 }
+b0 ~
+b0 !!
+b0 "!
+b10000000 #!
+b0 $!
+b0 %!
+0:
+1;
+0<
+0D
+0C
+0B
+0A
+0@
+0?
+0>
+0=
+0L
+0K
+0J
+0I
+0H
+0G
+0F
+0E
+0T
+0S
+0R
+0Q
+0P
+0O
+0N
+0M
+0\
+0[
+0Z
+0Y
+0X
+0W
+0V
+0U
+0d
+0c
+0b
+0a
+0`
+0_
+0^
+0]
+0l
+0k
+0j
+0i
+0h
+0g
+0f
+0e
+$end
+#5000
+1!
+1:
+#10000
+0!
+0:
+#15000
+1!
+1:
+#20000
+0!
+0:
+#25000
+1!
+1:
+0"
+0;
+#30000
+0!
+0:
+#35000
+1!
+1:
+#40000
+0!
+0:
+#45000
+1!
+1:
+1#
+b1111000 $
+b1111101 %
+b1110110 &
+b1111011 '
+b1001101 (
+b1100110 )
+1<
+1k
+1j
+1g
+1f
+1d
+1b
+1a
+1^
+1\
+1[
+1Y
+1X
+1W
+1V
+1S
+1R
+1P
+1O
+1N
+1L
+1J
+1I
+1H
+1G
+1F
+1A
+1@
+1?
+1>
+b111100000000000 o
+b111110100000000 p
+b111011000000000 q
+b111101100000000 r
+b1001101 s
+b1100110 t
+b10100000000 u
+b10100000000 v
+b11000000100000000 w
+b110000001 y
+b111100110000001 {
+b11000000100000000 x
+b110000001 z
+b111011110000001 |
+b11111111000000000 }
+b11111111001101001100110000000000 ~
+b11010011001100 !!
+b100010010110101 "!
+b100010100110101 #!
+b1000101 $!
+b1000101 %!
+#50000
+0!
+0:
+#55000
+1!
+1:
+0#
+0<
+1m
+b1000101 n
+b1000101 +
+1*
+#60000
+0!
+0:
+#65000
+1!
+1:
+0m
+0*
+#70000
+0!
+0:
+#75000
+1!
+1:
+#80000
+0!
+0:
+#85000
+1!
+1:
+b111100000000000 ,
+b111110100000000 -
+b111011000000000 .
+b111101100000000 /
+b1001101 0
+b1100110 1
+b10100000000 2
+b11000000100000000 4
+b110000001 6
+b111100110000001 8
+b10100000000 3
+b11000000100000000 5
+b110000001 7
+b111011110000001 9

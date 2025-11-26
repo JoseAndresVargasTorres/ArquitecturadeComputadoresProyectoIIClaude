@@ -1,0 +1,92 @@
+m255
+K4
+z2
+!s11f vlog 2020.1 2020.02, Feb 28 2020
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/gabri/OneDrive/Desktop/PrograProyectoArqui/Arqui2-Proyecto/simulation/modelsim
+vImageMemory
+Z1 DXx6 sv_std 3 std 0 22 VYECXdT12H8WgbUP_5Y6:3
+!s110 1764194605
+!i10b 1
+!s100 dUo9G5k44NU231IJnYLez0
+Z2 !s11b Dg1SIo80bB@j0V0VzS_@n1
+Igz_E4<JZW64[9]M[RTi:k2
+Z3 VDg1SIo80bB@j0V0VzS_@n1
+S1
+R0
+w1764192822
+8C:/Users/gabri/OneDrive/Desktop/PrograProyectoArqui/Arqui2-Proyecto/ImageMemory.sv
+FC:/Users/gabri/OneDrive/Desktop/PrograProyectoArqui/Arqui2-Proyecto/ImageMemory.sv
+!i122 0
+L0 1 25
+Z4 OV;L;2020.1;71
+r1
+!s85 0
+31
+Z5 !s108 1764194605.000000
+!s107 C:/Users/gabri/OneDrive/Desktop/PrograProyectoArqui/Arqui2-Proyecto/ImageMemory.sv|
+!s90 -reportprogress|300|-sv|-work|work|+incdir+C:/Users/gabri/OneDrive/Desktop/PrograProyectoArqui/Arqui2-Proyecto|C:/Users/gabri/OneDrive/Desktop/PrograProyectoArqui/Arqui2-Proyecto/ImageMemory.sv|
+!i113 1
+Z6 o-sv -work work
+Z7 !s92 -sv -work work +incdir+C:/Users/gabri/OneDrive/Desktop/PrograProyectoArqui/Arqui2-Proyecto
+Z8 tCvgOpt 0
+n@image@memory
+vImageMemory_SIMDPort
+R1
+Z9 !s110 1764194606
+!i10b 1
+!s100 96IWHo7`7Z`hRj6Cf^<mc3
+R2
+IQXhfQ5DYGmWX[iMonDHM_3
+R3
+S1
+R0
+w1764194570
+8C:/Users/gabri/OneDrive/Desktop/PrograProyectoArqui/Arqui2-Proyecto/ImageMemory_SIMDPort.sv
+FC:/Users/gabri/OneDrive/Desktop/PrograProyectoArqui/Arqui2-Proyecto/ImageMemory_SIMDPort.sv
+!i122 1
+L0 6 233
+R4
+r1
+!s85 0
+31
+R5
+!s107 C:/Users/gabri/OneDrive/Desktop/PrograProyectoArqui/Arqui2-Proyecto/ImageMemory_SIMDPort.sv|
+!s90 -reportprogress|300|-sv|-work|work|+incdir+C:/Users/gabri/OneDrive/Desktop/PrograProyectoArqui/Arqui2-Proyecto|C:/Users/gabri/OneDrive/Desktop/PrograProyectoArqui/Arqui2-Proyecto/ImageMemory_SIMDPort.sv|
+!i113 1
+R6
+R7
+R8
+n@image@memory_@s@i@m@d@port
+vtb_ImageMemory_SIMDPort
+R1
+R9
+!i10b 1
+!s100 6dHk32Q_^4B[CdQi0007N2
+R2
+I`SEmnJe2HhWc]<[O@04920
+R3
+S1
+R0
+w1764193926
+8C:/Users/gabri/OneDrive/Desktop/PrograProyectoArqui/Arqui2-Proyecto/tb_ImageMemory_SIMDPort.sv
+FC:/Users/gabri/OneDrive/Desktop/PrograProyectoArqui/Arqui2-Proyecto/tb_ImageMemory_SIMDPort.sv
+!i122 2
+L0 3 143
+R4
+r1
+!s85 0
+31
+!s108 1764194606.000000
+!s107 C:/Users/gabri/OneDrive/Desktop/PrograProyectoArqui/Arqui2-Proyecto/tb_ImageMemory_SIMDPort.sv|
+!s90 -reportprogress|300|-sv|-work|work|+incdir+C:/Users/gabri/OneDrive/Desktop/PrograProyectoArqui/Arqui2-Proyecto|C:/Users/gabri/OneDrive/Desktop/PrograProyectoArqui/Arqui2-Proyecto/tb_ImageMemory_SIMDPort.sv|
+!i113 1
+R6
+R7
+R8
+ntb_@image@memory_@s@i@m@d@port

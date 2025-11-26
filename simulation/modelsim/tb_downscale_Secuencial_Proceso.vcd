@@ -1,0 +1,757 @@
+$date
+	Thu Nov 20 20:33:46 2025
+$end
+$version
+	ModelSim Version 2020.1
+$end
+$timescale
+	1ps
+$end
+
+$scope module tb_downscale_Secuencial_Proceso $end
+$var parameter 32 ! SRC_H $end
+$var parameter 32 " SRC_W $end
+$var parameter 32 # DST_H $end
+$var parameter 32 $ DST_W $end
+$var reg 1 % clk $end
+$var reg 1 & rst $end
+$var reg 1 ' valid_in $end
+$var reg 8 ( I00 [7:0] $end
+$var reg 8 ) I10 [7:0] $end
+$var reg 8 * I01 [7:0] $end
+$var reg 8 + I11 [7:0] $end
+$var reg 8 , alpha [7:0] $end
+$var reg 8 - beta [7:0] $end
+$var reg 1 . valid_out $end
+$var reg 8 / pixel_out [7:0] $end
+$var integer 32 0 pass_count $end
+$var integer 32 1 fail_count $end
+
+$scope function bilinear_ref_pixel $end
+$upscope $end
+
+$scope task run_pixel $end
+$upscope $end
+
+$scope module dut $end
+$var wire 1 2 clk $end
+$var wire 1 3 rst $end
+$var wire 1 4 valid_in $end
+$var wire 1 5 I00 [7] $end
+$var wire 1 6 I00 [6] $end
+$var wire 1 7 I00 [5] $end
+$var wire 1 8 I00 [4] $end
+$var wire 1 9 I00 [3] $end
+$var wire 1 : I00 [2] $end
+$var wire 1 ; I00 [1] $end
+$var wire 1 < I00 [0] $end
+$var wire 1 = I10 [7] $end
+$var wire 1 > I10 [6] $end
+$var wire 1 ? I10 [5] $end
+$var wire 1 @ I10 [4] $end
+$var wire 1 A I10 [3] $end
+$var wire 1 B I10 [2] $end
+$var wire 1 C I10 [1] $end
+$var wire 1 D I10 [0] $end
+$var wire 1 E I01 [7] $end
+$var wire 1 F I01 [6] $end
+$var wire 1 G I01 [5] $end
+$var wire 1 H I01 [4] $end
+$var wire 1 I I01 [3] $end
+$var wire 1 J I01 [2] $end
+$var wire 1 K I01 [1] $end
+$var wire 1 L I01 [0] $end
+$var wire 1 M I11 [7] $end
+$var wire 1 N I11 [6] $end
+$var wire 1 O I11 [5] $end
+$var wire 1 P I11 [4] $end
+$var wire 1 Q I11 [3] $end
+$var wire 1 R I11 [2] $end
+$var wire 1 S I11 [1] $end
+$var wire 1 T I11 [0] $end
+$var wire 1 U alpha [7] $end
+$var wire 1 V alpha [6] $end
+$var wire 1 W alpha [5] $end
+$var wire 1 X alpha [4] $end
+$var wire 1 Y alpha [3] $end
+$var wire 1 Z alpha [2] $end
+$var wire 1 [ alpha [1] $end
+$var wire 1 \ alpha [0] $end
+$var wire 1 ] beta [7] $end
+$var wire 1 ^ beta [6] $end
+$var wire 1 _ beta [5] $end
+$var wire 1 ` beta [4] $end
+$var wire 1 a beta [3] $end
+$var wire 1 b beta [2] $end
+$var wire 1 c beta [1] $end
+$var wire 1 d beta [0] $end
+$var reg 1 e valid_out $end
+$var reg 8 f pixel_out [7:0] $end
+$var reg 16 g I00_q [15:0] $end
+$var reg 16 h I10_q [15:0] $end
+$var reg 16 i I01_q [15:0] $end
+$var reg 16 j I11_q [15:0] $end
+$var reg 16 k alpha_q [15:0] $end
+$var reg 16 l beta_q [15:0] $end
+$var reg 17 m diff_x0 [16:0] $end
+$var reg 17 n diff_x1 [16:0] $end
+$var reg 32 o mult_ax [31:0] $end
+$var reg 32 p mult_bx [31:0] $end
+$var reg 16 q term_ax [15:0] $end
+$var reg 16 r term_bx [15:0] $end
+$var reg 16 s a_q [15:0] $end
+$var reg 16 t b_q [15:0] $end
+$var reg 17 u diff_y [16:0] $end
+$var reg 32 v mult_by [31:0] $end
+$var reg 16 w term_by [15:0] $end
+$var reg 16 x v_q [15:0] $end
+$var reg 17 y v_rounded [16:0] $end
+$var reg 9 z pixel_int [8:0] $end
+$var reg 8 { pixel_clamped [7:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+0%
+1&
+0'
+b0 (
+b0 )
+b0 *
+b0 +
+b0 ,
+b0 -
+0.
+b0 /
+0e
+b0 f
+b0 g
+b0 h
+b0 i
+b0 j
+b0 k
+b0 l
+b0 m
+b0 n
+b0 o
+b0 p
+b0 q
+b0 r
+b0 s
+b0 t
+b0 u
+b0 v
+b0 w
+b0 x
+b10000000 y
+b0 z
+b0 {
+b100 !
+b100 "
+b11 #
+b11 $
+b0 0
+b0 1
+02
+13
+04
+0<
+0;
+0:
+09
+08
+07
+06
+05
+0D
+0C
+0B
+0A
+0@
+0?
+0>
+0=
+0L
+0K
+0J
+0I
+0H
+0G
+0F
+0E
+0T
+0S
+0R
+0Q
+0P
+0O
+0N
+0M
+0\
+0[
+0Z
+0Y
+0X
+0W
+0V
+0U
+0d
+0c
+0b
+0a
+0`
+0_
+0^
+0]
+$end
+#5000
+1%
+12
+#10000
+0%
+02
+#15000
+1%
+12
+#20000
+0%
+02
+#25000
+1%
+12
+#30000
+0%
+02
+#35000
+1%
+12
+0&
+03
+#40000
+0%
+02
+#45000
+1%
+12
+#50000
+0%
+02
+#55000
+1%
+12
+1'
+b1010 (
+b1010 )
+b1010 *
+b1010 +
+b1 ,
+b1 -
+14
+1d
+1\
+1S
+1Q
+1K
+1I
+1C
+1A
+1;
+19
+b101000000000 g
+b101000000000 h
+b101000000000 i
+b101000000000 j
+b1 k
+b1 l
+b101000000000 s
+b101000000000 t
+b101000000000 x
+b101010000000 y
+b1010 z
+b1010 {
+#60000
+0%
+02
+#65000
+1%
+12
+1e
+b1010 f
+0'
+b1010 /
+1.
+04
+b1 0
+#70000
+0%
+02
+#75000
+1%
+12
+0e
+1'
+b11110 (
+b110010 )
+b11110 *
+b110010 +
+b10000001 ,
+0.
+14
+1U
+0Q
+1P
+1O
+1J
+1H
+0A
+1@
+1?
+1:
+18
+b1111000000000 g
+b11001000000000 h
+b1111000000000 i
+b11001000000000 j
+b10000001 k
+b1010000000000 m
+b1010000000000 n
+b10100001010000000000 o
+b101000010100 q
+b10100000010100 s
+b10100001010000000000 p
+b101000010100 r
+b10100000010100 t
+b10100000010100 x
+b10100010010100 y
+b101000 z
+b101000 {
+#80000
+0%
+02
+#85000
+1%
+12
+1e
+b101000 f
+0'
+b101000 /
+1.
+04
+b10 0
+#90000
+0%
+02
+#95000
+1%
+12
+0e
+1'
+b1000110 (
+b1000110 )
+b1000110 *
+b1000110 +
+b1 ,
+0.
+14
+0U
+1R
+0P
+0O
+1N
+0I
+0H
+1F
+1B
+0@
+0?
+1>
+09
+08
+16
+b100011000000000 g
+b100011000000000 h
+b100011000000000 i
+b100011000000000 j
+b1 k
+b0 m
+b0 n
+b0 o
+b0 q
+b100011000000000 s
+b0 p
+b0 r
+b100011000000000 t
+b100011000000000 x
+b100011010000000 y
+b1000110 z
+b1000110 {
+#100000
+0%
+02
+#105000
+1%
+12
+1e
+b1000110 f
+0'
+b1000110 /
+1.
+04
+b11 0
+#110000
+0%
+02
+#115000
+1%
+12
+0e
+1'
+b1011010 (
+b1011010 )
+b10101010 *
+b10101010 +
+b10000001 -
+0.
+14
+1]
+0R
+1Q
+1O
+0N
+1M
+0J
+1I
+1G
+0F
+1E
+0B
+1A
+1@
+0:
+19
+18
+b101101000000000 g
+b101101000000000 h
+b1010101000000000 i
+b1010101000000000 j
+b10000001 l
+b101101000000000 s
+b1010101000000000 t
+b101000000000000 u
+b1010000101000000000000 v
+b10100001010000 w
+b1000001001010000 x
+b1000001011010000 y
+b10000010 z
+b10000010 {
+#120000
+0%
+02
+#125000
+1%
+12
+1e
+b10000010 f
+0'
+b10000010 /
+1.
+04
+b100 0
+#130000
+0%
+02
+#135000
+1%
+12
+0e
+1'
+b1101110 (
+b10000010 )
+b10111110 *
+b11010010 +
+b10000001 ,
+0.
+14
+1U
+0Q
+1P
+0O
+1N
+1J
+1H
+0A
+0@
+0>
+1=
+1:
+08
+17
+b110111000000000 g
+b1000001000000000 h
+b1011111000000000 i
+b1101001000000000 j
+b10000001 k
+b1010000000000 m
+b1010000000000 n
+b10100001010000000000 o
+b101000010100 q
+b111100000010100 s
+b10100001010000000000 p
+b101000010100 r
+b1100100000010100 t
+b1010000001100100 x
+b1010000011100100 y
+b10100000 z
+b10100000 {
+#140000
+0%
+02
+#145000
+1%
+12
+1e
+b10100000 f
+0'
+b10100000 /
+1.
+04
+b101 0
+#150000
+0%
+02
+#155000
+1%
+12
+0e
+1'
+b10010110 (
+b10010110 )
+b11100110 *
+b11100110 +
+b1 ,
+0.
+14
+0U
+1R
+0P
+1O
+0I
+0H
+1F
+1B
+1@
+09
+18
+07
+06
+15
+b1001011000000000 g
+b1001011000000000 h
+b1110011000000000 i
+b1110011000000000 j
+b1 k
+b0 m
+b0 n
+b0 o
+b0 q
+b1001011000000000 s
+b0 p
+b0 r
+b1110011000000000 t
+b1011111001010000 x
+b1011111011010000 y
+b10111110 z
+b10111110 {
+#160000
+0%
+02
+#165000
+1%
+12
+1e
+b10111110 f
+0'
+b10111110 /
+1.
+04
+b110 0
+#170000
+0%
+02
+#175000
+1%
+12
+0e
+1'
+b11110000 (
+b11110000 )
+b11110000 *
+b11110000 +
+b1 -
+0.
+14
+0]
+0S
+0R
+1P
+0K
+0J
+1H
+0C
+0B
+1?
+1>
+0;
+0:
+17
+16
+b1111000000000000 g
+b1111000000000000 h
+b1111000000000000 i
+b1111000000000000 j
+b1 l
+b101000000000000 v
+b1010000 w
+b1001011001010000 x
+b1111000000000000 s
+b1111000000000000 t
+b0 u
+b0 v
+b0 w
+b1111000000000000 x
+b1111000010000000 y
+b11110000 z
+b11110000 {
+#180000
+0%
+02
+#185000
+1%
+12
+1e
+b11110000 f
+0'
+b11110000 /
+1.
+04
+b111 0
+#190000
+0%
+02
+#195000
+1%
+12
+0e
+1'
+b11110101 (
+b11111010 )
+b11110101 *
+b11111010 +
+b10000001 ,
+0.
+14
+1U
+1S
+1Q
+1L
+1J
+1C
+1A
+1<
+1:
+b1111010100000000 g
+b1111101000000000 h
+b1111010100000000 i
+b1111101000000000 j
+b10000001 k
+b10100000000 m
+b10100000000 n
+b101000010100000000 o
+b1010000101 q
+b1111011110000101 s
+b101000010100000000 p
+b1010000101 r
+b1111011110000101 t
+b1111011110000101 x
+b1111100000000101 y
+b11111000 z
+b11111000 {
+#200000
+0%
+02
+#205000
+1%
+12
+1e
+b11111000 f
+0'
+b11111000 /
+1.
+04
+b1000 0
+#210000
+0%
+02
+#215000
+1%
+12
+0e
+1'
+b11111111 (
+b11111111 )
+b11111111 *
+b11111111 +
+b1 ,
+0.
+14
+0U
+1T
+1R
+1K
+1I
+1D
+1B
+1;
+19
+b1111111100000000 g
+b1111111100000000 h
+b1111111100000000 i
+b1111111100000000 j
+b1 k
+b0 m
+b0 n
+b0 o
+b0 q
+b1111111100000000 s
+b0 p
+b0 r
+b1111111100000000 t
+b1111111100000000 x
+b1111111110000000 y
+b11111111 z
+b11111111 {
+#220000
+0%
+02
+#225000
+1%
+12
+1e
+b11111111 f
+0'
+b11111111 /
+1.
+04
+b1001 0
+#230000
+0%
+02
+#235000
+1%
+12
+0e
+0.
+#240000
+0%
+02
