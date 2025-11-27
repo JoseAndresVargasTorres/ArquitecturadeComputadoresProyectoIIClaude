@@ -1,0 +1,117 @@
+module ModoSecuencial (
+	//bilinear_scalar_q8_8
+    input  logic              clk,
+    input  logic              rst,
+    input  logic              valid_in,
+    input  logic [7:0]        I00, I10, I01, I11,  // píxeles 8 bits [0-255]
+    input  logic [7:0]        alpha, beta,         // Q0.8: 0x00=0.0, 0xFF≈0.996
+    output logic              valid_out,
+    output logic [7:0]        pixel_out            // píxel resultante [0-255]
+);
+    // =========================
+    // 1) Extensión a Q8.8
+    // =========================
+    logic signed [15:0] I00_q, I10_q, I01_q, I11_q;
+    logic signed [15:0] alpha_q, beta_q;
+    
+    always_comb begin
+        // Píxeles: entero 8 bits -> Q8.8 (shift left 8)
+        I00_q = {I00, 8'b0};
+        I10_q = {I10, 8'b0};
+        I01_q = {I01, 8'b0};
+        I11_q = {I11, 8'b0};
+        
+        // Alpha/Beta: Q0.8 -> Q8.8 (parte entera = 0)
+        alpha_q = {8'b0, alpha};
+        beta_q  = {8'b0, beta};
+    end
+    
+    // =========================
+    // 2) Interpolación horizontal: a y b
+    //    a = I00 + alpha * (I10 - I00)
+    //    b = I01 + alpha * (I11 - I01)
+    // =========================
+    logic signed [15:0] diff_x0, diff_x1;
+    logic signed [31:0] mult_ax, mult_bx;   // Q8.8 * Q8.8 = Q16.16
+    logic signed [15:0] term_ax, term_bx;   // Q8.8
+    logic signed [15:0] a_q, b_q;           // Q8.8
+    
+    always_comb begin
+        // Diferencias en Q8.8
+        diff_x0 = I10_q - I00_q;
+        diff_x1 = I11_q - I01_q;
+        
+        // Multiplicación: Q8.8 * Q8.8 = Q16.16 (32 bits)
+        mult_ax = diff_x0 * alpha_q;
+        mult_bx = diff_x1 * alpha_q;
+        
+        // Extraer Q8.8: tomar bits [23:8] de Q16.16
+        term_ax = mult_ax[23:8];
+        term_bx = mult_bx[23:8];
+        
+        // Interpolación horizontal (Q8.8)
+        a_q = I00_q + term_ax;
+        b_q = I01_q + term_bx;
+    end
+    
+    // =========================
+    // 3) Interpolación vertical:
+    //    v = a + beta * (b - a)
+    // =========================
+    logic signed [15:0] diff_y;
+    logic signed [31:0] mult_by;            // Q16.16
+    logic signed [15:0] term_by;            // Q8.8
+    logic signed [15:0] v_q;                // Q8.8
+    
+    always_comb begin
+        diff_y  = b_q - a_q;                // Q8.8
+        mult_by = diff_y * beta_q;          // Q8.8 * Q8.8 = Q16.16
+        term_by = mult_by[23:8];            // Q8.8
+        v_q     = a_q + term_by;            // Q8.8
+    end
+    
+    // =========================
+    // 4) Redondeo y saturación:
+    //    v_q (Q8.8) -> entero 8 bits [0,255]
+    // =========================
+    logic signed [16:0] v_ext;              // Para sumar 0.5
+    logic signed [16:0] v_rounded;
+    logic signed [8:0]  pixel_int;          // Entero con bit extra para saturación
+    logic [7:0]         pixel_clamped;
+    
+    always_comb begin
+        // Extender a 17 bits (sign-extend) para evitar overflow al sumar
+        v_ext     = {v_q[15], v_q};
+        
+        // Sumar 0.5 en Q8.8 -> 0x80 (128 en decimal)
+        v_rounded = v_ext + 17'sd128;
+        
+        // Shift derecha 8 bits para obtener parte entera
+        pixel_int = v_rounded[16:8];
+        
+        // Saturación a [0, 255]
+        if (pixel_int[8]) begin  // Negativo (bit de signo)
+            pixel_clamped = 8'd0;
+        end else if (pixel_int > 9'd255) begin
+            pixel_clamped = 8'd255;
+        end else begin
+            pixel_clamped = pixel_int[7:0];
+        end
+    end
+    
+    // =========================
+    // 5) Registro de salida (1 ciclo de latencia)
+    // =========================
+    always_ff @(posedge clk or posedge rst) begin
+        if (rst) begin
+            valid_out <= 1'b0;
+            pixel_out <= 8'd0;
+        end else begin
+            valid_out <= valid_in;
+            if (valid_in) begin
+                pixel_out <= pixel_clamped;
+            end
+        end
+    end
+
+endmodule

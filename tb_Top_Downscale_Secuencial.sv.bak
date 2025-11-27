@@ -1,0 +1,202 @@
+`timescale 1ns/1ps
+
+module tb_Top_Downscale_SIMD;
+
+    // Parámetros reales del sistema
+    localparam int SRC_W = 32;
+    localparam int SRC_H = 32;
+    localparam int DST_W = 16;
+    localparam int DST_H = 16;
+    localparam int N     = 4;
+
+    localparam int DEPTH = SRC_W * SRC_H;
+
+    // Clock & reset
+    logic clk, rst;
+
+    // Señales hacia el DUT
+    logic start;
+    logic done;
+    logic [7:0] dbg_pixel_out;
+
+    // ================================================================
+    // Instancia del DUT
+    // ================================================================
+    Top_Downscale_SIMD #(
+        .SRC_W(SRC_W),
+        .SRC_H(SRC_H),
+        .DST_W(DST_W),
+        .DST_H(DST_H),
+        .N(N)
+    ) dut (
+        .clk(clk),
+        .rst(rst),
+        .start(start),
+        .done(done),
+        .dbg_pixel_out(dbg_pixel_out)
+    );
+
+    // Para cargar memoria (acceso directo al BRAM interno del módulo)
+    // NOTA: accedemos directamente al BRAM interno de `ImageMemory_SIMDPort`.
+    // Esto es válido en simulación.
+    //
+    // Ruta: dut.mem.mem.ram[addr]
+    //
+    // ================================================================
+    // CLOCK
+    // ================================================================
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk; // 100 MHz
+    end
+
+    // ================================================================
+    // Imagen fuente y referencia software
+    // ================================================================
+    int img_src     [0:SRC_H-1][0:SRC_W-1];
+    int expected_dst[0:DST_H-1][0:DST_W-1];
+
+    // ================================================================
+    // Función bilineal software
+    // ================================================================
+    function automatic int bilinear_ref(
+        input int a,b,c,d,
+        input real xw,
+        input real yw
+    );
+        real w00 = (1-xw)*(1-yw);
+        real w10 = (xw)*(1-yw);
+        real w01 = (1-xw)*(yw);
+        real w11 = (xw)*(yw);
+        real r   = a*w00 + b*w10 + c*w01 + d*w11;
+
+        int pix = $rtoi(r+0.5);
+        if (pix <   0) pix = 0;
+        if (pix > 255) pix = 255;
+        return pix;
+    endfunction
+
+    // ================================================================
+    // MAIN TEST
+    // ================================================================
+    initial begin
+        int i,j;
+
+        // Reset inicial
+        rst = 1;
+        start = 0;
+        repeat(5) @(posedge clk);
+        rst = 0;
+
+        // ============================================================
+        // 1. Generar imagen fuente 32×32
+        // ============================================================
+        $display("\n>>> Generando imagen fuente 32x32...");
+        for (i = 0; i < SRC_H; i++)
+            for (j = 0; j < SRC_W; j++)
+                img_src[i][j] = (i*4 + j*3) & 8'hFF;
+
+        // ============================================================
+        // 2. Cargar imagen en memoria del DUT
+        // ============================================================
+        $display(">>> Cargando BRAM interna del DUT...");
+
+        for (i = 0; i < SRC_H; i++) begin
+            for (j = 0; j < SRC_W; j++) begin
+                int addr = i*SRC_W + j;
+                // En la instanciación:
+                // dut.mem.mem.ram[addr]
+                dut.mem.mem.ram[addr] = img_src[i][j];
+            end
+        end
+
+        $display(">>> BRAM cargada.");
+
+        // ============================================================
+        // 3. Calcular referencia software
+        // ============================================================
+        real xr = real'(SRC_W - 1) / real'(DST_W - 1);
+        real yr = real'(SRC_H - 1) / real'(DST_H - 1);
+
+        $display(">>> Calculando referencia bilineal software...");
+
+        for (i = 0; i < DST_H; i++) begin
+            for (j = 0; j < DST_W; j++) begin
+
+                real xs = xr * j;
+                real ys = yr * i;
+
+                int xl = int'($floor(xs));
+                int yl = int'($floor(ys));
+
+                int xh = (xl < SRC_W-1) ? xl+1 : xl;
+                int yh = (yl < SRC_H-1) ? yl+1 : yl;
+
+                real xw = xs - xl;
+                real yw = ys - yl;
+
+                int a = img_src[yl][xl];
+                int b = img_src[yl][xh];
+                int c = img_src[yh][xl];
+                int d = img_src[yh][xh];
+
+                expected_dst[i][j] = bilinear_ref(a,b,c,d,xw,yw);
+            end
+        end
+
+        $display(">>> Referencia lista.");
+
+        // ============================================================
+        // 4. Iniciar procesamiento
+        // ============================================================
+        @(posedge clk);
+        $display(">>> Iniciando procesamiento SIMD...");
+        start = 1;
+        @(posedge clk);
+        start = 0;
+
+        // ============================================================
+        // 5. Esperar done
+        // ============================================================
+        wait(done == 1);
+        @(posedge clk);
+
+        $display(">>> Procesamiento completado!");
+
+        // ============================================================
+        // 6. Comparar resultados HW vs SW
+        // ============================================================
+        $display(">>> Comparando resultados...");
+
+        int pass = 0;
+        int fail = 0;
+
+        for (i = 0; i < DST_H; i++) begin
+            for (j = 0; j < DST_W; j++) begin
+
+                int hw = dut.core.image_out[i][j];
+                int sw = expected_dst[i][j];
+
+                if ($abs(hw - sw) <= 1)
+                    pass++;
+                else begin
+                    fail++;
+                    $display("FAIL (%0d,%0d): HW=%0d SW=%0d",
+                             i, j, hw, sw);
+                end
+            end
+        end
+
+        $display("\nRESULTADOS:");
+        $display("  PASS = %0d", pass);
+        $display("  FAIL = %0d\n", fail);
+
+        if (fail == 0)
+            $display(">>> TODAS LAS PRUEBAS OK — SIMD FUNCIONA CORRECTAMENTE!\n");
+        else
+            $display(">>> HAY DIFERENCIAS — REVISAR FSM SIMD O LECTURAS DE MEMORIA.\n");
+
+        $finish;
+    end
+
+endmodule

@@ -1,0 +1,68 @@
+module FSM_SIMD (
+    input  logic clk,
+    input  logic rst,
+
+    input  logic start,
+    input  logic simd_valid,
+
+    output logic load_regs,
+    output logic run_simd,
+    output logic write_back,
+    output logic done
+);
+
+    typedef enum logic [2:0] {
+        S_IDLE,
+        S_LOAD,
+        S_RUN,
+        S_WRITE,
+        S_NEXT,
+        S_DONE
+    } state_t;
+
+    state_t state, next;
+
+    always_ff @(posedge clk or posedge rst) begin
+        if (rst) state <= S_IDLE;
+        else     state <= next;
+    end
+
+    always_comb begin
+        load_regs  = 0;
+        run_simd   = 0;
+        write_back = 0;
+        done       = 0;
+        next       = state;
+
+        case (state)
+            S_IDLE: if (start) next = S_LOAD;
+
+            S_LOAD: begin
+                load_regs = 1;
+                next = S_RUN;
+            end
+
+            S_RUN: begin
+                run_simd = 1;
+                if (simd_valid)
+                    next = S_WRITE;
+            end
+
+            S_WRITE: begin
+                write_back = 1;
+                next = S_NEXT;
+            end
+
+            S_NEXT: begin
+                // repetir hasta terminar todos los píxeles
+                next = S_LOAD;
+            end
+
+            S_DONE: begin
+                done = 1;
+            end
+
+        endcase
+    end
+
+endmodule

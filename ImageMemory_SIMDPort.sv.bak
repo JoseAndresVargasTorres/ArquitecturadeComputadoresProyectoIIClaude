@@ -1,0 +1,317 @@
+// =====================================================
+// ImageMemory_SIMDPort.sv
+// N caches independientes con árbitro de memoria
+// =====================================================
+
+module ImageMemory_SIMDPort #(
+    parameter int IMG_W = 512,
+    parameter int IMG_H = 512,
+    parameter int N     = 4,     // Lanes SIMD
+    parameter int LINE_SIZE = 8  // Tamaño de línea de caché
+)(
+    input  logic clk,
+    input  logic rst,
+
+    // Requests SIMD (N lanes independientes)
+    input  logic                           rd_req   [N],
+    input  logic [$clog2(IMG_W*IMG_H)-1:0] rd_addr  [N],
+    output logic                           rd_valid [N],
+    output logic [7:0]                     rd_data  [N],
+
+    // Write port para cargar memoria
+    input  logic we,
+    input  logic [$clog2(IMG_W*IMG_H)-1:0] wr_addr,
+    input  logic [7:0] wr_data
+);
+
+    localparam int DEPTH       = IMG_W * IMG_H;
+    localparam int ADDR_BITS   = $clog2(DEPTH);
+    localparam int OFFSET_BITS = $clog2(LINE_SIZE);
+    localparam int TAG_BITS    = ADDR_BITS - OFFSET_BITS;
+
+    // ============================
+    // Memoria base BRAM
+    // ============================
+    logic [7:0]           mem_rdata;
+    logic [ADDR_BITS-1:0] mem_addr;
+    logic                 mem_access;  // Indica si hay acceso de lectura
+
+    ImageMemory #(
+        .IMG_W(IMG_W), 
+        .IMG_H(IMG_H)
+    ) mem (
+        .clk    (clk),
+        .we     (we),
+        .addr   (we ? wr_addr : mem_addr),
+        .wr_data(wr_data),
+        .rd_data(mem_rdata)
+    );
+
+    // ====================================================
+    // Estructura de caché
+    // ====================================================
+    typedef struct packed {
+        logic                  valid;
+        logic [TAG_BITS-1:0]   tag;
+        logic [7:0]            data [LINE_SIZE];
+    } cache_line_t;
+
+    cache_line_t cache [N];
+
+    // ====================================================
+    // Estados por lane
+    // ====================================================
+    typedef enum logic [1:0] { 
+        IDLE, 
+        WAIT_ARB,      // Esperando turno del árbitro
+        FETCH, 
+        OUTPUT 
+    } state_t;
+
+    state_t state [N];
+
+    // Señales de control por lane
+    logic [OFFSET_BITS-1:0] fetch_idx       [N];
+    logic [ADDR_BITS-1:0]   line_addr_base  [N];
+    logic [TAG_BITS-1:0]    req_tag         [N];
+    logic [OFFSET_BITS-1:0] req_offset      [N];
+
+    // Señales para el lane que está accediendo memoria
+    logic [$clog2(N)-1:0] active_lane;
+    logic                 mem_busy;
+
+    // ====================================================
+    // Lógica combinacional: extraer tag/offset
+    // ====================================================
+    genvar g;
+    generate
+        for (g = 0; g < N; g++) begin : gen_addr_decode
+            always_comb begin
+                req_tag[g]    = rd_addr[g][ADDR_BITS-1:OFFSET_BITS];
+                req_offset[g] = rd_addr[g][OFFSET_BITS-1:0];
+            end
+        end
+    endgenerate
+
+    // ====================================================
+    // Round-robin arbiter para acceso a memoria
+    // ====================================================
+    logic [$clog2(N)-1:0] arb_ptr;  // Puntero round-robin
+    logic [N-1:0] lane_needs_mem;   // ¿Qué lanes necesitan memoria?
+
+    always_comb begin
+        lane_needs_mem = '0;
+        for (int i = 0; i < N; i++) begin
+            lane_needs_mem[i] = (state[i] == WAIT_ARB);
+        end
+    end
+
+    // Encontrar siguiente lane que necesita memoria (round-robin)
+    logic [$clog2(N)-1:0] next_lane;
+    logic found_next;
+    always_comb begin
+        next_lane = arb_ptr;
+        found_next = 0;
+        
+        // Buscar desde arb_ptr+1 hasta N-1
+        for (int i = 0; i < N; i++) begin
+            int idx = (arb_ptr + 1 + i) % N;
+            if (lane_needs_mem[idx] && !found_next) begin
+                next_lane = idx;
+                found_next = 1;
+            end
+        end
+    end
+
+    // ====================================================
+    // FSM por lane + árbitro
+    // ====================================================
+    always_ff @(posedge clk or posedge rst) begin
+        if (rst) begin
+            for (int i = 0; i < N; i++) begin
+                state[i]       <= IDLE;
+                rd_valid[i]    <= 1'b0;
+                cache[i].valid <= 1'b0;
+                fetch_idx[i]   <= '0;
+            end
+            mem_busy <= 1'b0;
+            arb_ptr  <= '0;
+            
+        end else begin
+            
+            // ==========================================
+            // Procesar cada lane
+            // ==========================================
+            for (int i = 0; i < N; i++) begin
+                
+                rd_valid[i] <= 1'b0;  // Por defecto
+
+                case (state[i])
+
+                    // ==================
+                    // IDLE: Esperar request
+                    // ==================
+                    IDLE: begin
+                        if (rd_req[i]) begin
+                            // Verificar hit/miss
+                            if (cache[i].valid && (cache[i].tag == req_tag[i])) begin
+                                // CACHE HIT
+                                rd_data[i]  <= cache[i].data[req_offset[i]];
+                                rd_valid[i] <= 1'b1;
+                                // Permanece en IDLE
+                            end else begin
+                                // CACHE MISS - necesita fetch
+                                line_addr_base[i] <= {req_tag[i], {OFFSET_BITS{1'b0}}};
+                                fetch_idx[i] <= '0;
+                                state[i] <= WAIT_ARB;
+                            end
+                        end
+                    end
+
+                    // ==================
+                    // WAIT_ARB: Esperar turno de memoria
+                    // ==================
+                    WAIT_ARB: begin
+                        if (!mem_busy && (next_lane == i) && found_next) begin
+                            // Este lane ganó el árbitro
+                            state[i] <= FETCH;
+                        end
+                    end
+
+                    // ==================
+                    // FETCH: Cargar línea desde memoria
+                    // ==================
+                    FETCH: begin
+                        if (i == active_lane) begin
+                            // Solo el lane activo controla mem_addr
+                            
+                            if (fetch_idx[i] == '0) begin
+                                // Primer ciclo: solicitar primera dirección
+                                mem_addr <= line_addr_base[i];
+                            end else if (fetch_idx[i] < LINE_SIZE) begin
+                                // Ciclos intermedios: guardar dato y pedir siguiente
+                                cache[i].data[fetch_idx[i]-1] <= mem_rdata;
+                                mem_addr <= line_addr_base[i] + fetch_idx[i];
+                            end
+                            
+                            if (fetch_idx[i] == LINE_SIZE) begin
+                                // Último dato
+                                cache[i].data[LINE_SIZE-1] <= mem_rdata;
+                                cache[i].valid <= 1'b1;
+                                cache[i].tag   <= req_tag[i];
+                                state[i] <= OUTPUT;
+                            end else begin
+                                fetch_idx[i] <= fetch_idx[i] + 1;
+                            end
+                        end
+                    end
+
+                    // ==================
+                    // OUTPUT: Devolver dato al usuario
+                    // ==================
+                    OUTPUT: begin
+                        rd_data[i]  <= cache[i].data[req_offset[i]];
+                        rd_valid[i] <= 1'b1;
+                        state[i]    <= IDLE;
+                    end
+
+                endcase
+            end
+            
+            // ==========================================
+            // Controlar árbitro de memoria
+            // ==========================================
+            if (!mem_busy && found_next) begin
+                // Asignar memoria al siguiente lane
+                active_lane <= next_lane;
+                mem_busy    <= 1'b1;
+                arb_ptr     <= next_lane;  // Actualizar para fairness
+            end else if (mem_busy && (state[active_lane] == OUTPUT || 
+                                     state[active_lane] == IDLE)) begin
+                // Lane actual terminó
+                mem_busy <= 1'b0;
+            end
+        end
+    end
+
+endmodule
+
+
+// =====================================================
+// TESTBENCH para ImageMemory_SIMDPort
+// =====================================================
+`ifdef SIMULATION
+
+module tb_ImageMemory_SIMDPort;
+    parameter int IMG_W = 16;
+    parameter int IMG_H = 16;
+    parameter int N = 4;
+    
+    logic clk, rst;
+    logic [N-1:0] rd_req;
+    logic [$clog2(IMG_W*IMG_H)-1:0] rd_addr [N];
+    logic [N-1:0] rd_valid;
+    logic [7:0] rd_data [N];
+    
+    logic we;
+    logic [$clog2(IMG_W*IMG_H)-1:0] wr_addr;
+    logic [7:0] wr_data;
+    
+    // DUT
+    ImageMemory_SIMDPort #(
+        .IMG_W(IMG_W), .IMG_H(IMG_H), .N(N)
+    ) dut (.*);
+    
+    // Clock
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk;
+    end
+    
+    // Test
+    initial begin
+        $display("=== Test ImageMemory_SIMDPort ===");
+        rst = 1;
+        rd_req = '0;
+        we = 0;
+        repeat(3) @(posedge clk);
+        rst = 0;
+        
+        // Cargar algunos datos
+        $display("\n1. Cargando memoria...");
+        for (int i = 0; i < 32; i++) begin
+            @(posedge clk);
+            we = 1;
+            wr_addr = i;
+            wr_data = i * 2;  // Patrón simple
+        end
+        @(posedge clk);
+        we = 0;
+        
+        // Test: 4 lecturas simultáneas
+        $display("\n2. Leyendo 4 direcciones simultáneas...");
+        @(posedge clk);
+        for (int i = 0; i < N; i++) begin
+            rd_req[i] = 1;
+            rd_addr[i] = i * 4;  // Direcciones 0, 4, 8, 12
+        end
+        
+        @(posedge clk);
+        rd_req = '0;
+        
+        // Esperar resultados
+        repeat(20) begin
+            @(posedge clk);
+            for (int i = 0; i < N; i++) begin
+                if (rd_valid[i])
+                    $display("  Lane %0d: addr=%0d, data=%0d", 
+                             i, rd_addr[i], rd_data[i]);
+            end
+        end
+        
+        $display("\n=== Test completado ===");
+        $finish;
+    end
+endmodule
+
+`endif

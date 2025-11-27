@@ -1,0 +1,52 @@
+typedef logic [7:0] simd4_t [0:3];
+
+module SIMD_Registros (
+    input  logic clk,
+    input  logic rst,
+    input  logic load,
+
+    input  simd4_t I00_in,
+    input  simd4_t I10_in,
+    input  simd4_t I01_in,
+    input  simd4_t I11_in,
+
+    input  simd4_t alpha_in,
+    input  simd4_t beta_in,
+
+    output simd4_t I00_out,
+    output simd4_t I10_out,
+    output simd4_t I01_out,
+    output simd4_t I11_out,
+    output simd4_t alpha_out,
+    output simd4_t beta_out
+);
+
+    simd4_t I00_r, I10_r, I01_r, I11_r;
+    simd4_t alpha_r, beta_r;
+
+    always_ff @(posedge clk or posedge rst) begin
+        if (rst) begin
+            I00_r <= '{default:0};
+            I10_r <= '{default:0};
+            I01_r <= '{default:0};
+            I11_r <= '{default:0};
+            alpha_r <= '{default:0};
+            beta_r  <= '{default:0};
+        end else if (load) begin
+            I00_r <= I00_in;
+            I10_r <= I10_in;
+            I01_r <= I01_in;
+            I11_r <= I11_in;
+            alpha_r <= alpha_in;
+            beta_r  <= beta_in;
+        end
+    end
+
+    assign I00_out = I00_r;
+    assign I10_out = I10_r;
+    assign I01_out = I01_r;
+    assign I11_out = I11_r;
+    assign alpha_out = alpha_r;
+    assign beta_out  = beta_r;
+
+endmodule
