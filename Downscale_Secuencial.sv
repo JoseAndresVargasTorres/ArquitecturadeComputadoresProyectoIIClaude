@@ -74,17 +74,17 @@ module Downscale_Secuencial #(
 	 
     //Calculo de coordenadas
     always_comb begin
-        // Posición fuente en Q8.8
-        x_src_fp = j_dst * X_RATIO_FP;
-        y_src_fp = i_dst * Y_RATIO_FP;
+        // Posición fuente en Q8.8 (truncar explícitamente a 16 bits)
+        x_src_fp = 16'(j_dst * X_RATIO_FP);
+        y_src_fp = 16'(i_dst * Y_RATIO_FP);
 
-        // Floor (parte entera)
-        x_l = x_src_fp[15:FRAC];
-        y_l = y_src_fp[15:FRAC];
+        // Floor (parte entera) - extraer bits superiores
+        x_l = COORD_BITS'(x_src_fp[15:FRAC]);
+        y_l = COORD_BITS'(y_src_fp[15:FRAC]);
 
         // Ceil (floor + 1 si no estamos en el borde)
-        x_h = (x_l < (SRC_W-1)) ? (x_l + 1) : x_l;
-        y_h = (y_l < (SRC_H-1)) ? (y_l + 1) : y_l;
+        x_h = (x_l < COORD_BITS'(SRC_W-1)) ? COORD_BITS'(x_l + 1'b1) : x_l;
+        y_h = (y_l < COORD_BITS'(SRC_H-1)) ? COORD_BITS'(y_l + 1'b1) : y_l;
     end
 
 
@@ -150,10 +150,10 @@ module Downscale_Secuencial #(
                         end else begin
                             // Avanzar al siguiente píxel
                             if (j_dst == (DST_W-1)) begin
-                                j_dst <= 0;
-                                i_dst <= i_dst + 1;
+                                j_dst <= '0;
+                                i_dst <= (DST_I_BITS+1)'(i_dst + 1'b1);
                             end else begin
-                                j_dst <= j_dst + 1;
+                                j_dst <= (DST_J_BITS+1)'(j_dst + 1'b1);
                             end
                             state <= S_SETUP;
                         end
