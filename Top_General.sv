@@ -30,6 +30,10 @@ module Top_General #(
     logic [31:0] perf_counter;
     logic done_flag;
 
+    // Señal de escritura a memoria de imagen (solo cuando se escribe a reg 0x04)
+    logic img_we;
+    assign img_we = avs_write && (avs_address == 8'h04);
+
     // ====================================================
     // 1. Banco de Registros Accesible por JTAG
     // ====================================================
@@ -71,10 +75,10 @@ module Top_General #(
     ) u_top_seq (
         .clk      (clk),
         .rst      (rst),
-        .cfg_we   (avs_write && !mode_reg),  // Aqui se escribe solo si modo secuencial
+        .cfg_we   (img_we && !mode_reg),  // Escribir solo si modo secuencial y escribiendo a imagen
         .cfg_addr (wr_addr_reg[15:0]),
         .cfg_data (wr_data_reg[7:0]),
-        .start_req(start && !mode_reg),      // Aqui se inicia solo si modo secuencial
+        .start_req(start && !mode_reg),   // Iniciar solo si modo secuencial
         .done     (done_seq),
         .dbg_data (dbg_seq)
     );
@@ -94,10 +98,10 @@ module Top_General #(
     ) u_top_simd (
         .clk      (clk),
         .rst      (rst),
-        .cfg_we   (avs_write && mode_reg),  // Aqui se escribe solo si modo SIMD
+        .cfg_we   (img_we && mode_reg),  // Escribir solo si modo SIMD y escribiendo a imagen
         .cfg_addr (wr_addr_reg[15:0]),
         .cfg_data (wr_data_reg[7:0]),
-        .start_req(start && mode_reg),      // Aqui se inicia solo si modo SIMD
+        .start_req(start && mode_reg),   // Iniciar solo si modo SIMD
         .done     (done_simd),
         .dbg_data (dbg_simd)
     );

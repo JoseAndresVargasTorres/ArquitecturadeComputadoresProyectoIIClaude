@@ -103,6 +103,10 @@ module Top_Downscale_SIMD #(
     logic [$clog2(DST_H):0] write_row;
     logic [$clog2(DST_W):0] write_col;
 
+    // Variables temporales para calculo de coordenadas
+    logic [$clog2(SRC_H):0] temp_row;
+    logic [$clog2(SRC_W):0] temp_col;
+
     // ==================================================
     // FSM principal
     // ==================================================
@@ -189,11 +193,9 @@ module Top_Downscale_SIMD #(
                             // Almacenar datos en arreglo 2D
                             for (int k = 0; k < N; k++) begin
                                 if (load_addr + k < SRC_DEPTH) begin
-                                    logic [$clog2(SRC_H):0] row;
-                                    logic [$clog2(SRC_W):0] col;
-                                    row = (load_addr + k) / SRC_W;
-                                    col = (load_addr + k) % SRC_W;
-                                    image_in[row][col] <= mem_rd_data[k];
+                                    temp_row = (load_addr + k) / SRC_W;
+                                    temp_col = (load_addr + k) % SRC_W;
+                                    image_in[temp_row][temp_col] <= mem_rd_data[k];
                                 end
                             end
 
