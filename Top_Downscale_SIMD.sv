@@ -103,12 +103,10 @@ module Top_Downscale_SIMD #(
     logic [$clog2(DST_H):0] write_row;
     logic [$clog2(DST_W):0] write_col;
 
-    // Variables temporales para calculo de coordenadas
+    // Variables temporales para calculo de coordenadas (deben ser señales, no locales)
     logic [$clog2(SRC_H):0] temp_row;
     logic [$clog2(SRC_W):0] temp_col;
-
-    // Variable para verificar si todos los datos estan listos
-    logic all_ready;
+    logic all_ready_sig;
 
     // ==================================================
     // FSM principal
@@ -185,13 +183,13 @@ module Top_Downscale_SIMD #(
 
                     // Verificar si todos los datos validos llegaron
                     if (mem_rd_valid[0] || (load_addr >= SRC_DEPTH)) begin
-                        all_ready = 1'b1;
+                        all_ready_sig = 1'b1;
                         for (int k = 0; k < N; k++) begin
                             if ((load_addr + k < SRC_DEPTH) && !mem_rd_valid[k])
-                                all_ready = 1'b0;
+                                all_ready_sig = 1'b0;
                         end
 
-                        if (all_ready) begin
+                        if (all_ready_sig) begin
                             // Almacenar datos en arreglo 2D
                             for (int k = 0; k < N; k++) begin
                                 if (load_addr + k < SRC_DEPTH) begin

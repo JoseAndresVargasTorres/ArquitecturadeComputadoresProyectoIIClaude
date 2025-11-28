@@ -83,9 +83,18 @@ module Top_Downscale_Secuencial #(
 
     // Contador para carga secuencial
     logic [15:0] load_addr;
-    logic [15:0] prev_addr;
-    logic [$clog2(SRC_H):0] row;
-    logic [$clog2(SRC_W):0] col;
+
+    // Señales auxiliares para decodificación de dirección (combinacionales)
+    logic [15:0] prev_addr_calc;
+    logic [$clog2(SRC_H):0] row_calc;
+    logic [$clog2(SRC_W):0] col_calc;
+
+    // Lógica combinacional para calcular coordenadas desde dirección
+    always_comb begin
+        prev_addr_calc = load_addr - 1;
+        row_calc = prev_addr_calc / SRC_W;
+        col_calc = prev_addr_calc % SRC_W;
+    end
 
     // ==================================================
     // FSM principal
@@ -134,10 +143,8 @@ module Top_Downscale_Secuencial #(
                         // El dato estara disponible en el siguiente ciclo
                         if (load_addr > 0) begin
                             // Almacenar dato leido en ciclo anterior
-                            prev_addr = load_addr - 1;
-                            row = prev_addr / SRC_W;
-                            col = prev_addr % SRC_W;
-                            image_in[row][col] <= bram_rd_data;
+                            // Usar señales combinacionales calculadas
+                            image_in[row_calc][col_calc] <= bram_rd_data;
                         end
 
                         // Avanzar direccion de lectura
@@ -145,9 +152,8 @@ module Top_Downscale_Secuencial #(
                     end else begin
                         // Ultima lectura
                         if (load_addr == DEPTH) begin
-                            row = (DEPTH-1) / SRC_W;
-                            col = (DEPTH-1) % SRC_W;
-                            image_in[row][col] <= bram_rd_data;
+                            // Almacenar último pixel
+                            image_in[(DEPTH-1) / SRC_W][(DEPTH-1) % SRC_W] <= bram_rd_data;
                             load_addr <= load_addr + 1;
                         end else begin
                             state <= S_START_DOWNSCALE;

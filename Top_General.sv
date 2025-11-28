@@ -115,10 +115,26 @@ module Top_General #(
     assign rd_data_reg = {24'd0, (mode_reg ? dbg_simd : dbg_seq)};
 
     // Aqui se cuenta el performance counter
+    // Detectar flanco ascendente de start para resetear el contador
+    logic start_prev;
+    logic start_pulse;
+
     always_ff @(posedge clk or posedge rst) begin
-        if (rst || start)
+        if (rst) begin
+            start_prev <= 1'b0;
+        end else begin
+            start_prev <= start;
+        end
+    end
+
+    assign start_pulse = start && !start_prev;
+
+    always_ff @(posedge clk or posedge rst) begin
+        if (rst)
             perf_counter <= 0;
-        else
+        else if (start_pulse)
+            perf_counter <= 0;
+        else if (!done_flag)  // Solo contar mientras no esté terminado
             perf_counter <= perf_counter + 1;
     end
 
