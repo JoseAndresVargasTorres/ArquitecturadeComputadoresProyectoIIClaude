@@ -107,6 +107,9 @@ module Top_Downscale_SIMD #(
     logic [$clog2(SRC_H):0] temp_row;
     logic [$clog2(SRC_W):0] temp_col;
 
+    // Variable para verificar si todos los datos estan listos
+    logic all_ready;
+
     // ==================================================
     // FSM principal
     // ==================================================
@@ -182,7 +185,6 @@ module Top_Downscale_SIMD #(
 
                     // Verificar si todos los datos validos llegaron
                     if (mem_rd_valid[0] || (load_addr >= SRC_DEPTH)) begin
-                        logic all_ready;
                         all_ready = 1'b1;
                         for (int k = 0; k < N; k++) begin
                             if ((load_addr + k < SRC_DEPTH) && !mem_rd_valid[k])
