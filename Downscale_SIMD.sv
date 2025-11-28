@@ -112,9 +112,16 @@ module Downscale_SIMD #(
                     x_l[g] = x_src_fp[g][15:FRAC];
                     y_l[g] = y_src_fp[g][15:FRAC];
 
-                    // Ceil (con saturación en borde)
-                    x_h[g] = (x_l[g] < (SRC_W-1)) ? (x_l[g] + 1) : x_l[g];
-                    y_h[g] = (y_l[g] < (SRC_H-1)) ? (y_l[g] + 1) : y_l[g];
+                    // Ceil - solo incrementar si hay parte fraccional
+                    if (x_src_fp[g][FRAC-1:0] == 0 || x_l[g] >= (SRC_W-1))
+                        x_h[g] = x_l[g];
+                    else
+                        x_h[g] = x_l[g] + 1;
+
+                    if (y_src_fp[g][FRAC-1:0] == 0 || y_l[g] >= (SRC_H-1))
+                        y_h[g] = y_l[g];
+                    else
+                        y_h[g] = y_l[g] + 1;
                 end else begin
                     // Lane inactivo - valores por defecto
                     i_dst[g]    = '0;

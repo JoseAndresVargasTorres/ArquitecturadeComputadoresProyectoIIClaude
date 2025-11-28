@@ -82,9 +82,16 @@ module Downscale_Secuencial #(
         x_l = x_src_fp[15:FRAC];
         y_l = y_src_fp[15:FRAC];
 
-        // Ceil (floor + 1 si no estamos en el borde)
-        x_h = (x_l < (SRC_W-1)) ? (x_l + 1) : x_l;
-        y_h = (y_l < (SRC_H-1)) ? (y_l + 1) : y_l;
+        // Ceil - solo incrementar si hay parte fraccional
+        if (x_src_fp[FRAC-1:0] == 0 || x_l >= (SRC_W-1))
+            x_h = x_l;
+        else
+            x_h = x_l + 1;
+
+        if (y_src_fp[FRAC-1:0] == 0 || y_l >= (SRC_H-1))
+            y_h = y_l;
+        else
+            y_h = y_l + 1;
     end
 
 
